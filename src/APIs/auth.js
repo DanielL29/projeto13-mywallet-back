@@ -1,7 +1,8 @@
 import mongoClient from "../configs/db.js"
-import { userSchema } from "../validations/auth.js"
+import { userSchema, loginSchema } from "../validations/auth.js"
+import jwt from 'jsonwebtoken'
 
-async function signup(req, res) {
+async function signUp(req, res) {
     const { name, email, password } = req.body
 
     try {
@@ -28,8 +29,31 @@ async function signup(req, res) {
     }
 }
 
-async function signin(req, res) {
+async function signIn(req, res) {
+    const { email, password } = req.body
 
+    try {
+        const { error } = loginSchema.validate(req.body, { abortEarly: false })
+
+        if(error) {
+            return res.status(422).send(error)
+        }
+
+        await mongoClient.connect()
+        const db = mongoClient.db('my_wallet')
+    
+        const userFounded = await db.collection('users').findOne({ email })
+    
+        if(userFounded === null || userFounded.password !== password) {
+            return res.status(401).send('email/password incorrect or email not founded')
+        } 
+
+        const token = jwt.sign({ id: userFounded._id }, 'secret')
+
+        res.status(200).json({ name: userFounded.name, email, token })
+    } catch(err) {
+        res.status(500).send(err)
+    }
 }
 
-export { signup, signin }
+export { signUp, signIn }
