@@ -1,0 +1,32 @@
+{
+  "name": "projeto13-mywallet-back",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "13° Projeto da Driven Education - MyWallet (backend)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielL29/projeto13-mywallet-back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanielL29/projeto13-mywallet-back/issues"
+  },
+  "homepage": "https://github.com/DanielL29/projeto13-mywallet-back#readme",
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "joi": "^17.6.0",
+    "mongodb": "^4.7.0",
+    "nodemon": "^2.0.18",
+    "string-strip-html": "^9.1.12"
+  }
+}
