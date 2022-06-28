@@ -2,6 +2,7 @@ import mongoClient from "../configs/db.js"
 import { ObjectId } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import { recordSchema } from "../validations/record.js"
+import dayjs from 'dayjs'
 
 async function recordsGET(req, res) {
     try {
@@ -35,7 +36,7 @@ async function recordsPOST(req, res) {
             price *= -1
         }
 
-        const record = { price, description, isIncrease, userId: id }
+        const record = { price, description, isIncrease, date: dayjs().format('DD/MM'), userId: id }
 
         const { error } = recordSchema.validate(record, { abortEarly: false })
 

@@ -7,6 +7,8 @@ const recordSchema = Joi.object({
         .required(),
     isIncrease: Joi.bool()
         .required(),
+    date: Joi.string()
+        .required(),
     userId: Joi.string()
         .required()
 })
