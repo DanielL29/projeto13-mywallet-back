@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 async function recordsGET(req, res) {
     const token = req.headers.authorization.replace('bearer ', '')
     const { id } = jwt.verify(token, 'secret')
+    let balance;
 
     if (!token || !id) {
         return res.status(401).send('unauthorized, missing token')
@@ -23,8 +24,12 @@ async function recordsGET(req, res) {
         }
 
         const records = await db.collection('records').find({ userId: id }).toArray()
+        await db.collection('records').aggregate([
+            { $match: { userId: id } }, 
+            { $group: { _id: null, sum: { $sum: "$price" } } }
+        ]).forEach(item => balance = item)
 
-        res.status(200).send(records)
+        res.status(200).send({ records, balance })
     } catch (err) {
         res.status(500).send(err)
     }
@@ -58,7 +63,6 @@ async function recordsPOST(req, res) {
         }
 
         await db.collection('records').insertOne(record)
-        updateUserBalance(id)
 
         res.sendStatus(201)
     } catch (err) {
@@ -66,19 +70,31 @@ async function recordsPOST(req, res) {
     }
 }
 
-async function updateUserBalance(id) {
-    await mongoClient.connect()
-    const db = mongoClient.db('my_wallet')
-    let balance;
+async function recordsDELETE(req, res) {
+    const recordId = req.params.id
+    const token = req.headers.authorization.replace('bearer ', '')
+    const { id } = jwt.verify(token, 'secret')
 
-    await db.collection('records').aggregate([
-        { $match: { userId: id } }, 
-        { $group: { _id: null, sum: { $sum: "$price" } } }
-    ]).forEach(item => balance = item)
+    if (!token || !id) {
+        return res.status(401).send('Unauthorized, missing token')
+    }
+    
+    try {
+        await mongoClient.connect()
+        const db = mongoClient.db('my_wallet')
 
-    if(balance.sum) {
-        await db.collection('users').updateOne({ _id: ObjectId(id) }, { $set: { balance: balance.sum } })
+        const idFounded = await db.collection('records').findOne({ _id: ObjectId(recordId), userId: id })
+
+        if(idFounded === null) {
+            return res.status(404).send('record not found')
+        }
+
+        await db.collection('records').deleteOne({ _id: ObjectId(recordId) })
+
+        res.sendStatus(200)
+    } catch (err) {
+        res.status(500).send(err)
     }
 }
 
-export { recordsGET, recordsPOST }
+export { recordsGET, recordsPOST, recordsDELETE }

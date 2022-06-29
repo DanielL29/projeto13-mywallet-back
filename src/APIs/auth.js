@@ -1,5 +1,4 @@
 import mongoClient from "../configs/db.js"
-import { ObjectId } from 'mongodb'
 import { userSchema, loginSchema } from "../validations/auth.js"
 import jwt from 'jsonwebtoken'
 
@@ -57,28 +56,4 @@ async function signIn(req, res) {
     }
 }
 
-async function userBalanceGET(req, res) {
-    const token = req.headers.authorization.replace('bearer ', '')
-    const { id } = jwt.verify(token, 'secret')
-
-    if (!token || !id) {
-        return res.status(401).send('Unauthorized, missing token')
-    }
-    
-    try {
-        await mongoClient.connect()
-        const db = mongoClient.db('my_wallet')
-        
-        const userFounded = await db.collection('users').findOne({ _id: ObjectId(id) })
-
-        if(userFounded === null) {
-            return res.status(404).send('user not found')
-        }
-
-        res.status(200).json({ balance: userFounded.balance })
-    } catch (err) {
-        res.status(500).send(err)
-    }
-}
-
-export { signUp, signIn, userBalanceGET }
+export { signUp, signIn }
