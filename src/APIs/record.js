@@ -9,17 +9,17 @@ async function recordsGET(req, res) {
     const { id } = jwt.verify(token, 'secret')
 
     if (!token || !id) {
-        return res.status(401).send('Unauthorized, missing token')
+        return res.status(401).send('unauthorized, missing token')
     }
 
     try {
         await mongoClient.connect()
         const db = mongoClient.db('my_wallet')
 
-        const userFounded = await db.collection('users').findOne({ _id: Object(id) })
+        const userFounded = await db.collection('users').findOne({ _id: ObjectId(id) })
 
         if(userFounded === null) {
-            res.status(404).send('user not found')
+            return res.status(404).send('user not found')
         }
 
         const records = await db.collection('records').find({ userId: id }).toArray()
