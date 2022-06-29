@@ -5,11 +5,24 @@ import { recordSchema } from "../validations/record.js"
 import dayjs from 'dayjs'
 
 async function recordsGET(req, res) {
+    const token = req.headers.authorization.replace('bearer ', '')
+    const { id } = jwt.verify(token, 'secret')
+
+    if (!token || !id) {
+        return res.status(401).send('Unauthorized, missing token')
+    }
+
     try {
         await mongoClient.connect()
         const db = mongoClient.db('my_wallet')
 
-        const records = await db.collection('records').find().toArray()
+        const userFounded = await db.collection('users').findOne({ _id: Object(id) })
+
+        if(userFounded === null) {
+            res.status(404).send('user not found')
+        }
+
+        const records = await db.collection('records').find({ userId: id }).toArray()
 
         res.status(200).send(records)
     } catch (err) {
