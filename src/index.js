@@ -7,7 +7,7 @@ import { recordsGET, recordsPOST, recordsDELETE, recordsPUT } from './APIs/recor
 
 const app = express()
 
-app.use(cors())
+app.use(cors({ origin: "*" }))
 app.use(express.json())
 dotenv.config()
 
