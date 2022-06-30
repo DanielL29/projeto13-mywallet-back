@@ -6,8 +6,15 @@ import { signUp, signIn } from './APIs/auth.js'
 import { recordsGET, recordsPOST, recordsDELETE, recordsPUT } from './APIs/record.js'
 
 const app = express()
+const corsOptions = {
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials:true, 
+    preflightContinue: false,
+    optionsSuccessStatus: 200
+}
 
-app.use(cors({ origin: "*" }))
+app.use(cors(corsOptions))
 app.use(express.json())
 dotenv.config()
 
