@@ -18,10 +18,6 @@ const recordSchema = Joi.object({
             "boolean.base": `"isIncrease" precisa ser booleano`,
             "any.required": `"isIncrease" é obrigatório!`
         })
-        .required(),
-    date: Joi.string()
-        .required(),
-    userId: Joi.string()
         .required()
 })
 
