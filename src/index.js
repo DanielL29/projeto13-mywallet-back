@@ -8,15 +8,8 @@ import recordRoutes from './routes/recordRoutes.js'
 dotenv.config()
 
 const app = express()
-const corsOptions = {
-    origin: "*",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true, 
-    preflightContinue: false,
-    optionsSuccessStatus: 200
-}
 
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(express.json())
 
 app.use('/auth', authRoutes)
