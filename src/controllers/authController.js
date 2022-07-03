@@ -1,16 +1,16 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import db from './../database/connect.js'
 
 async function signUp(req, res) {
     const { name, email, password } = req.body
-    const { db } = res.locals
     const hashPassword = bcrypt.hashSync(password, 10)
 
     try {
         const emailFounded = await db.collection('users').findOne({ email })
     
         if(emailFounded !== null) {
-            return res.status(409).send('email already registered!')
+            return res.status(409).send('email já cadastrado!')
         }
 
         await db.collection('users').insertOne({ name, email, password: hashPassword })
@@ -23,13 +23,12 @@ async function signUp(req, res) {
 
 async function signIn(req, res) {
     const { email, password } = req.body
-    const { db } = res.locals
 
     try {
         const userFounded = await db.collection('users').findOne({ email })
     
         if(!userFounded || !bcrypt.compareSync(password, userFounded.password)) {
-            return res.status(401).send('email/password incorrect or email not founded')
+            return res.status(401).send('email/senha incorreto ou email não encontrado')
         } 
 
         const token = jwt.sign({ id: userFounded._id }, 'secret', { expiresIn: '30m' })

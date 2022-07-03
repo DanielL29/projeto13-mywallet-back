@@ -13,7 +13,7 @@ async function validateToken(req, res, next) {
     const id = decoded.id
 
     if (!token || !id) {
-        return res.status(401).send('unauthorized, missing token')
+        return res.status(401).send('não autorizado, faltando token')
     }
 
     res.locals.id = id

@@ -1,15 +1,16 @@
 import { ObjectId } from 'mongodb'
 import dayjs from 'dayjs'
+import db from './../database/connect.js'
 
 async function recordsGET(req, res) {
     let balance;
-    const { id, db } = res.locals
+    const { id } = res.locals
 
     try {
         const userFounded = await db.collection('users').findOne({ _id: ObjectId(id) })
 
         if(userFounded === null) {
-            return res.status(404).send('user not found')
+            return res.status(404).send('usuario não encontrado')
         }
 
         const records = await db.collection('records').find({ userId: id }).toArray()
@@ -27,7 +28,7 @@ async function recordsGET(req, res) {
 
 async function recordsPOST(req, res) {
     const { description, isIncrease } = req.body
-    const { id, db } = res.locals
+    const { id } = res.locals
     let { price } = req.body
 
     try {
@@ -44,7 +45,7 @@ async function recordsPOST(req, res) {
 
 async function recordsPUT(req, res) {
     const { description, isIncrease } = req.body
-    const { recordFounded, recordId, db } = res.locals
+    const { recordFounded, recordId } = res.locals
     let { price } = req.body
 
     try {
@@ -60,7 +61,7 @@ async function recordsPUT(req, res) {
 }
 
 async function recordsDELETE(req, res) {
-    const { recordId, db } = res.locals
+    const { recordId } = res.locals
     
     try {
         await db.collection('records').deleteOne({ _id: ObjectId(recordId) })

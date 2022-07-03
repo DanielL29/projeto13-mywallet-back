@@ -5,4 +5,8 @@ dotenv.config()
 
 const mongoClient = new MongoClient(process.env.MONGO_URI)
 
-export default mongoClient
+await mongoClient.connect()
+
+const db = mongoClient.db('my_wallet')
+
+export default db
