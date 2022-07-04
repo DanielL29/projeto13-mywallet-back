@@ -13,7 +13,7 @@ async function recordsGET(req, res) {
             return res.status(404).send('usuario não encontrado')
         }
 
-        const records = await db.collection('records').find({ userId: id }).filter({ _id: -1 }).toArray()
+        const records = await db.collection('records').find({ userId: id }).sort({ _id: -1 }).toArray()
 
         await db.collection('records').aggregate([
             { $match: { userId: id } }, 
