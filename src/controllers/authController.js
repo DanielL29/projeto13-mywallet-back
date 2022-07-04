@@ -31,7 +31,7 @@ async function signIn(req, res) {
             return res.status(401).send('email/senha incorreto ou email não encontrado')
         } 
 
-        const token = jwt.sign({ id: userFounded._id }, 'secret', { expiresIn: '1m' })
+        const token = jwt.sign({ id: userFounded._id }, 'secret', { expiresIn: '30m' })
 
         res.status(200).json({ name: userFounded.name, token })
     } catch(err) {
